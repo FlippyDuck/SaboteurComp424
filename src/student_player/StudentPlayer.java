@@ -3,12 +3,8 @@ package student_player;
 import boardgame.Move;
 
 import Saboteur.SaboteurPlayer;
-<<<<<<< HEAD
 
-import java.util.ArrayList;
-=======
 import Saboteur.cardClasses.SaboteurMap;
->>>>>>> 75636b04e7905ccfc0b08355c788e52f11fab120
 
 import Saboteur.SaboteurBoardState;
 import Saboteur.SaboteurMove;
@@ -58,7 +54,7 @@ public class StudentPlayer extends SaboteurPlayer {
         }
     
         // Return your move to be processed by the server.
-        return result;
+        // return result;
     	SaboteurMove myMove = boardState.getRandomMove();
     	double max = 0;
     	for(SaboteurMove move : boardState.getAllLegalMoves()) {
