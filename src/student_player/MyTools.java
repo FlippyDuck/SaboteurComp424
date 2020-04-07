@@ -11,6 +11,9 @@ import Saboteur.cardClasses.SaboteurMap;
 import Saboteur.cardClasses.SaboteurTile;
 
 public class MyTools {
+	
+	public static ArrayList<SaboteurCard> discard = new ArrayList<SaboteurCard>();
+	
     public static double getSomething() {
         return Math.random();
     }
@@ -75,5 +78,19 @@ public class MyTools {
             ArrayList<int[]> positions = boardState.possiblePositions(pathTiles.get(i));
             
         }
+        
+        return null;
+
+    }
+    
+    public static int distanceToNearestGoal(int[] pos) {
+    	int distance = Integer.MAX_VALUE;
+    	for(int i = 0; i < 3; i++) {
+    		int dx = Math.abs(pos[0] - SaboteurBoardState.hiddenPos[i][0]);
+    		int dy = Math.abs(pos[1] - SaboteurBoardState.hiddenPos[i][1]);
+    		if(dx + dy < distance)
+    			distance = dx + dy;
+    	}
+    	return distance;
     }
 }
