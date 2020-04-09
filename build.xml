@@ -10,7 +10,7 @@
     <!-- Compile ======================================================== -->
     <target name="compile">
         <mkdir dir="bin"/>
-        <javac srcdir="src" destdir="bin" debug="false" includeantruntime="false" source="${target.version}" target="${target.version}"/>
+        <javac srcdir="src" destdir="bin" debug="true" includeantruntime="false" source="${target.version}" target="${target.version}"/>
     </target>
 
     <target name="debug">
@@ -22,6 +22,12 @@
     <target name="student" depends="compile">
         <java classpath="${run.classpath}" classname="boardgame.Client" fork="true">
             <arg value="student_player.StudentPlayer"/>
+        </java>
+    </target>
+
+    <target name="random" depends="compile">
+        <java classpath="${run.classpath}" classname="boardgame.Client" fork="true">
+            <arg value="Saboteur.RandomSaboteurPlayer"/>
         </java>
     </target>
 
