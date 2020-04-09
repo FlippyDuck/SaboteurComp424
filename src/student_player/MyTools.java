@@ -5,13 +5,12 @@ import java.util.Arrays;
 
 import Saboteur.SaboteurBoardState;
 import Saboteur.SaboteurMove;
-import Saboteur.cardClasses.SaboteurBonus;
-import Saboteur.cardClasses.SaboteurCard;
-import Saboteur.cardClasses.SaboteurDrop;
-import Saboteur.cardClasses.SaboteurMap;
-import Saboteur.cardClasses.SaboteurTile;
+import Saboteur.cardClasses.*;
 
 public class MyTools {
+
+	private static ArrayList<SaboteurCard> discard = new ArrayList<SaboteurCard>();
+    private static SaboteurTile[][] previousBoard;
 	
     public static double getSomething() {
         return Math.random();
@@ -238,6 +237,80 @@ public class MyTools {
             System.out.println();
         }
         System.out.println("\n\n");
+    }
+
+    public static SaboteurMove monteCarlo(SaboteurBoardState boardState, int player_id) {
+        //Getting opponent's last move
+		if (previousBoard != null) {
+			SaboteurTile[][] board = boardState.getHiddenBoard();
+			for(int i = 0; i < SaboteurBoardState.BOARD_SIZE; i++) {
+				for(int j = 0; j < SaboteurBoardState.BOARD_SIZE; j++) {
+					if(previousBoard[i][j] != board[i][j]) {
+						//Tile was added
+						if(previousBoard[i][j] == null) {
+							discard.add(board[i][j]);
+						}
+						//Tile was destroyed
+						else if(board[i][j] == null) {
+							discard.add(new SaboteurDestroy());
+						}
+						//TODO: enemy map, bonus, malus
+						//Don't know what cards enemy has dropped
+					}
+				}
+			}
+		}
+		//Getting rest of deck
+		ArrayList<SaboteurCard> myCards = boardState.getCurrentPlayerCards();
+		ArrayList<SaboteurCard> deck = SaboteurCard.getDeck();
+		//Remove cards from discard pile
+        for(int i = 0; i < deck.size(); i++) {
+            for(int j = 0; j < discard.size(); j++) {
+                if(deck.get(i).getName().equals(discard.get(j).getName())) {
+                    deck.remove(i);
+                    i--;
+                    break;
+                }
+            }
+		}
+		//Remove cards from your hand
+        for(int i = 0; i < deck.size(); i++) {
+            for(int j = 0; j < myCards.size(); j++) {
+                if(deck.get(i).getName().equals(myCards.get(j).getName())) {
+                    deck.remove(i);
+                    i--;
+                    break;
+                }
+            }
+		}
+		//Monte carlo
+    	SaboteurMove myMove = boardState.getRandomMove();
+    	double max = 0;
+    	for(SaboteurMove move : boardState.getAllLegalMoves()) {
+    		//Prioritize map
+    		if(move.getCardPlayed() instanceof SaboteurMap) {
+    			myMove = move;
+    			break;
+    		}
+    		BoardCopy board;
+    		double utility = 0;
+    		//Number of random runs per legal move
+    		int numRuns = 100;
+    		for(int i = 0; i < numRuns; i++) {
+    			board = new BoardCopy(boardState.getHiddenBoard(), boardState.getHiddenIntBoard(), boardState.getCurrentPlayerCards(), deck, player_id);
+    			//Process your move, then start the random run
+    			board.processMove(move);
+    			utility += board.run();
+    		}
+    		if(utility > max) {
+    			myMove = move;
+    			max = utility;
+    		}
+    		//System.out.println(max);
+    	}
+		discard.add(myMove.getCardPlayed());
+        previousBoard = boardState.getHiddenBoard();
+        return myMove;
     }
     
     public static int distanceToNearestGoal(int[] pos) {
