@@ -25,19 +25,22 @@ public class BoardCopy extends BoardState {
 	private boolean[] myHiddenRevealed = {false,false,false};
 	private boolean[] hiddenRevealed = {false,false,false};
 	private SaboteurTile[] hiddenCards = new SaboteurTile[3];
-	private int winner = Board.NOBODY;
+    private int winner = Board.NOBODY;
+    //Whether you know where the nugget is already
 	private boolean foundNugget = false;
 
-	public BoardCopy(SaboteurTile[][] board, int[][] intBoard, ArrayList<SaboteurCard> cards, int id) {
+	public BoardCopy(SaboteurTile[][] board, int[][] intBoard, ArrayList<SaboteurCard> cards, ArrayList<SaboteurCard> enemy, int id) {
 		super();
 		this.board = board;
 		this.intBoard = intBoard;
 		getIntBoard();
 		myId = id;
-		myCards = cards;
-		enemyCards = SaboteurCard.getDeck(); //TODO: get enemy's moves
-		enemyCards.removeAll(myCards);
-		enemyCards.removeAll(MyTools.discard);
+        myCards = cards;
+        //Make copy of enemyCards
+        enemyCards = new ArrayList<SaboteurCard>();
+        for(SaboteurCard card : enemy) {
+            enemyCards.add(SaboteurCard.copyACard(card.getName()));
+        }
         
         //Getting nugget tile
 		for(int i = 0; i < 3; i++) {
@@ -80,9 +83,8 @@ public class BoardCopy extends BoardState {
             hand = enemyCards;
             isBlocked= enemyMalus > 0;
         }
-
+        //System.out.println("" + turnPlayer + hand.size());
         ArrayList<SaboteurMove> legalMoves = new ArrayList<>();
-
         for(SaboteurCard card : hand){
             if( card instanceof SaboteurTile && !isBlocked) {
                 ArrayList<int[]> allowedPositions = possiblePositions((SaboteurTile)card);
@@ -363,7 +365,8 @@ public class BoardCopy extends BoardState {
         }
         else if(testCard instanceof SaboteurDrop){
             if(turnPlayer==myId) myCards.remove(pos[0]);
-            else enemyCards.remove(pos[0]);
+            //TODO: IndexOutOfBounds occurs here:
+            //else enemyCards.remove(pos[0]);
         }
         this.draw();
         this.updateWinner();
@@ -372,7 +375,7 @@ public class BoardCopy extends BoardState {
     }
 	
 	private void draw(){
-        if(enemyCards.size()>7){
+        if(enemyCards.size()>0){
             if(turnPlayer==myId){
                 myCards.add(enemyCards.remove(random.nextInt(enemyCards.size())));
             }
@@ -564,7 +567,7 @@ public class BoardCopy extends BoardState {
 
 	@Override
 	public boolean gameOver() {
-		return enemyCards.size()==0 && myCards.size()==0 || winner != Board.NOBODY;
+		return enemyCards.size()==0 || myCards.size()==0 || winner != Board.NOBODY;
 	}
 
 	@Override

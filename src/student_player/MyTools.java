@@ -13,8 +13,6 @@ import Saboteur.cardClasses.SaboteurTile;
 
 public class MyTools {
 	
-	public static ArrayList<SaboteurCard> discard = new ArrayList<SaboteurCard>();
-	
     public static double getSomething() {
         return Math.random();
     }
