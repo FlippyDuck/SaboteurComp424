@@ -4,7 +4,6 @@ import Saboteur.cardClasses.*;
 import boardgame.Board;
 import boardgame.BoardState;
 import boardgame.Move;
-import student_player.MyTools;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -282,9 +281,6 @@ public class SaboteurBoardState extends BoardState {
 
         return this.intBoard; }
     public int[][] getHiddenIntBoard() {
-        // System.out.println("getHiddenIntBoard");
-        // MyTools.printHiddenBoard(board);
-        // System.out.println("------------------");
         //update the int board, and provide it to the player with the hidden objectives set at EMPTY.
         //Note that this function is available to the player.
         boolean[] listHiddenRevealed;
@@ -322,8 +318,6 @@ public class SaboteurBoardState extends BoardState {
             }
         }
 
-        // MyTools.printIntBoard(this.intBoard);
-        // System.out.println("------------------------------");
         return this.intBoard; }
     public SaboteurTile[][] getHiddenBoard(){
         // returns the board in SaboteurTile format, where the objectives become the 8 tiles.
@@ -336,7 +330,6 @@ public class SaboteurBoardState extends BoardState {
         }
         for(int h=0;h<3;h++){
             if(turnPlayer==1 && !player1hiddenRevealed[h] || turnPlayer==0 && !player2hiddenRevealed[h]){
-                // System.out.println("getHiddenBoard - hiddenPos = " + Arrays.deepToString(hiddenPos));
                 hiddenboard[hiddenPos[h][0]][hiddenPos[h][1]] = new SaboteurTile("8");
             }
         }
@@ -391,7 +384,6 @@ public class SaboteurBoardState extends BoardState {
         ArrayList<SaboteurTile> objHiddenList=new ArrayList<>();
         for(int i=0;i<3;i++) {
             if (!hiddenRevealed[i]){
-                // System.out.println("verifyLegit - hiddenPos = " + Arrays.deepToString(SaboteurBoardState.hiddenPos));
                 objHiddenList.add(this.board[hiddenPos[i][0]][hiddenPos[i][1]]);
             }
         }

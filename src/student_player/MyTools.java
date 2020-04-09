@@ -139,13 +139,15 @@ public class MyTools {
         if (bestTile == null) {
             return boardState.getRandomMove();
         }
+        System.out.println("Best dist = " + minDist);
+        System.out.println("Playing tile " + bestTile.getName() + " at " + Arrays.toString(bestPos));
         return new SaboteurMove(bestTile, bestPos[0], bestPos[1], boardState.getTurnPlayer());
     }
 
     public static void printIntBoard(int[][] board) {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
-                System.out.print(board[i][j] + " ");
+                System.out.print(board[i][j] == -1 ? "-" : board[i][j]);
             }
             System.out.println();
         }
@@ -183,10 +185,12 @@ public class MyTools {
     }
 
     public static int continuousPathDistanceFromGoal(int[][] board) {
+        // System.out.println("Computing distance from goal");
+        // printIntBoard(board);
         // int startPos = SaboteurBoardState.originPos * 3;
         
-        int[] startPos = {SaboteurBoardState.originPos * 3, SaboteurBoardState.originPos * 3};
-        int[] endPos = {SaboteurBoardState.hiddenPos[1][0] * 3, SaboteurBoardState.hiddenPos[1][1] * 3};
+        int[] startPos = {SaboteurBoardState.originPos * 3 + 1, SaboteurBoardState.originPos * 3 + 1};
+        int[] endPos = {SaboteurBoardState.hiddenPos[1][0] * 3 + 1, SaboteurBoardState.hiddenPos[1][1] * 3 + 1};
 
         boolean[][] reachableArr = new boolean[SaboteurBoardState.BOARD_SIZE * 3][SaboteurBoardState.BOARD_SIZE * 3];
         for (int i = 0; i < reachableArr.length; i++) {
@@ -195,7 +199,6 @@ public class MyTools {
             }
         }
 
-        boolean done = false;
         reachableArr[startPos[0]][startPos[1]] = true;
 
         ArrayList<int[]> frontier = new ArrayList<>();
@@ -204,18 +207,19 @@ public class MyTools {
 
         int minDist = Integer.MAX_VALUE;
 
-        while (!done) {
-            done = true;
+        while (frontier.size() > 0) {
+            // printReachable(reachableArr);
             int[] pos = frontier.remove(0);
             
             for (int i = 0; i < moves.length; i++) {
                 int x = pos[0] + moves[i][0];
                 int y = pos[1] + moves[i][1];
+                if (x >= board.length || x < 0 || y >= board[0].length || y < 0) {
+                    continue;
+                }
                 if (board[x][y] == SaboteurBoardState.TUNNEL && reachableArr[x][y] == false) {
                     reachableArr[x][y] = true;
-                    int[] temp = {x, y};
-                    frontier.add(temp);
-                    done = false;
+                    frontier.add(new int[]{x, y});
                     int tmpDist = Math.abs(x - endPos[0]) + Math.abs(y - endPos[1]);
                     if (tmpDist < minDist) {
                         minDist = tmpDist;
@@ -223,7 +227,19 @@ public class MyTools {
                 }
             }    
         }
+        // printReachable(reachableArr);
+        // System.out.println("minDist = " + minDist);
         return minDist;
+    }
+
+    public static void printReachable(boolean[][] reachableArr) {
+        for (int i = 0; i < reachableArr.length; i++) {
+            for (int j = 0; j < reachableArr[i].length; j++) {
+                System.out.print(reachableArr[i][j] ? "1" : "0");
+            }
+            System.out.println();
+        }
+        System.out.println("\n\n");
     }
     
     public static int distanceToNearestGoal(int[] pos) {

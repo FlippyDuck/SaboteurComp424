@@ -5,7 +5,7 @@ import boardgame.Move;
 import Saboteur.SaboteurPlayer;
 
 import Saboteur.cardClasses.SaboteurMap;
-
+import Saboteur.cardClasses.SaboteurTile;
 import Saboteur.SaboteurBoardState;
 import Saboteur.SaboteurMove;
 
@@ -51,10 +51,15 @@ public class StudentPlayer extends SaboteurPlayer {
                 //     System.out.println("Error occurred");
                 //     System.out.println(e.getMessage());
                 // }
-                
-                if (MyTools.continuousPathDistanceFromGoal(boardState.getHiddenIntBoard()) < 7) {
-                    currentPhase = Phase.MIDGAME;
+                if (result.getCardPlayed() instanceof SaboteurTile) {
+                    int[][] board = boardState.getHiddenIntBoard();
+                    MyTools.insertTile(board, (SaboteurTile) result.getCardPlayed(), result.getPosPlayed());
+                    if (MyTools.continuousPathDistanceFromGoal(board) < 10) {
+                        currentPhase = Phase.MIDGAME;
+                        System.out.println("Moving to midgame phase");
+                    }
                 }
+                
                 break;
             case MIDGAME:
                 SaboteurMove myMove = boardState.getRandomMove();
