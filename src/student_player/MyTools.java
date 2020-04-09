@@ -240,7 +240,7 @@ public class MyTools {
                 if (board[x][y] == SaboteurBoardState.TUNNEL && reachableArr[x][y] == false) {
                     reachableArr[x][y] = true;
                     frontier.add(new int[]{x, y});
-                    int tmpDist = Math.abs(x - endPos[0]) + Math.abs(y - endPos[1]) / 3;
+                    int tmpDist = Math.abs(x - endPos[0]) + Math.abs(y - endPos[1]) / 5; // prioritize vertical distance
                     if (tmpDist < minDist) {
                         minDist = tmpDist;
                     }
