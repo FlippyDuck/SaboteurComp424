@@ -36,7 +36,8 @@ public class BoardCopy extends BoardState {
 		this.board = board;
 		this.intBoard = intBoard;
 		getIntBoard();
-		myId = id;
+        myId = id;
+        turnPlayer = myId;
         myCards = cards;
         //Make copy of deck
         this.deck = new ArrayList<SaboteurCard>();
@@ -591,10 +592,10 @@ public class BoardCopy extends BoardState {
     }
 
 	public int run() {
-		int id = 1 - myId; //Start with enemy turn
+		turnPlayer = 1 - myId; //Start with enemy turn
         while(winner == Board.NOBODY) {
             processMove(null);
-            id = 1 - id;
+            //id = 1 - id;
         }
         if(winner == myId) {
         	return 1;
