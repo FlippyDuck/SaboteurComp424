@@ -57,7 +57,7 @@ public class StudentPlayer extends SaboteurPlayer {
                 if (result.getCardPlayed() instanceof SaboteurTile) {
                     int[][] board = boardState.getHiddenIntBoard();
                     MyTools.insertTile(board, (SaboteurTile) result.getCardPlayed(), result.getPosPlayed());
-                    if (MyTools.continuousPathDistanceFromGoal(board) < 6) {
+                    if (MyTools.continuousPathDistanceFromGoal(board, 1) < 6) {
                         currentPhase = Phase.MIDGAME;
                         System.out.println("Moving to midgame phase");
                     }
