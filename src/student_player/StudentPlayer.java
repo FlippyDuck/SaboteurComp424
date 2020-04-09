@@ -79,24 +79,24 @@ public class StudentPlayer extends SaboteurPlayer {
 				}
 			}
 		}
-		//Getting opponent's possible cards
+		//Getting rest of deck
 		ArrayList<SaboteurCard> myCards = boardState.getCurrentPlayerCards();
-		ArrayList<SaboteurCard> enemyCards = SaboteurCard.getDeck();
+		ArrayList<SaboteurCard> deck = SaboteurCard.getDeck();
 		//Remove cards from discard pile
-        for(int i = 0; i < enemyCards.size(); i++) {
+        for(int i = 0; i < deck.size(); i++) {
             for(int j = 0; j < discard.size(); j++) {
-                if(enemyCards.get(i).getName().equals(discard.get(j).getName())) {
-                    enemyCards.remove(i);
+                if(deck.get(i).getName().equals(discard.get(j).getName())) {
+                    deck.remove(i);
                     i--;
                     break;
                 }
             }
 		}
 		//Remove cards from your hand
-        for(int i = 0; i < enemyCards.size(); i++) {
+        for(int i = 0; i < deck.size(); i++) {
             for(int j = 0; j < myCards.size(); j++) {
-                if(enemyCards.get(i).getName().equals(myCards.get(j).getName())) {
-                    enemyCards.remove(i);
+                if(deck.get(i).getName().equals(myCards.get(j).getName())) {
+                    deck.remove(i);
                     i--;
                     break;
                 }
@@ -116,7 +116,7 @@ public class StudentPlayer extends SaboteurPlayer {
     		//Number of random runs per legal move
     		int numRuns = 100;
     		for(int i = 0; i < numRuns; i++) {
-    			board = new BoardCopy(boardState.getHiddenBoard(), boardState.getHiddenIntBoard(), boardState.getCurrentPlayerCards(), enemyCards, player_id);
+    			board = new BoardCopy(boardState.getHiddenBoard(), boardState.getHiddenIntBoard(), boardState.getCurrentPlayerCards(), deck, player_id);
     			//Process your move, then start the random run
     			board.processMove(move);
     			utility += board.run();

@@ -2,6 +2,7 @@ package student_player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 
 import Saboteur.SaboteurBoardState;
@@ -19,7 +20,8 @@ public class BoardCopy extends BoardState {
 	
 	private int turnPlayer;
 	private ArrayList<SaboteurCard> myCards;
-	private ArrayList<SaboteurCard> enemyCards; //The rest of the deck
+    private ArrayList<SaboteurCard> enemyCards;
+    private ArrayList<SaboteurCard> deck;
 	private int myMalus;
 	private int enemyMalus;
 	private boolean[] myHiddenRevealed = {false,false,false};
@@ -29,17 +31,26 @@ public class BoardCopy extends BoardState {
     //Whether you know where the nugget is already
 	private boolean foundNugget = false;
 
-	public BoardCopy(SaboteurTile[][] board, int[][] intBoard, ArrayList<SaboteurCard> cards, ArrayList<SaboteurCard> enemy, int id) {
+	public BoardCopy(SaboteurTile[][] board, int[][] intBoard, ArrayList<SaboteurCard> cards, ArrayList<SaboteurCard> deck, int id) {
 		super();
 		this.board = board;
 		this.intBoard = intBoard;
 		getIntBoard();
 		myId = id;
         myCards = cards;
-        //Make copy of enemyCards
+        //Make copy of deck
+        this.deck = new ArrayList<SaboteurCard>();
+        for(SaboteurCard card : deck) {
+            this.deck.add(SaboteurCard.copyACard(card.getName()));
+        }
+        Collections.shuffle(this.deck);
+        //Get enemy cards
         enemyCards = new ArrayList<SaboteurCard>();
-        for(SaboteurCard card : enemy) {
-            enemyCards.add(SaboteurCard.copyACard(card.getName()));
+        for(int i = 0; i < 7; i++) {
+            if(this.deck.isEmpty()) {
+                break;
+            }
+            enemyCards.add(SaboteurCard.copyACard(this.deck.remove(0).getName()));
         }
         
         //Getting nugget tile
@@ -375,9 +386,12 @@ public class BoardCopy extends BoardState {
     }
 	
 	private void draw(){
-        if(enemyCards.size()>0){
-            if(turnPlayer==myId){
-                myCards.add(enemyCards.remove(random.nextInt(enemyCards.size())));
+        if(deck.size()>0){
+            if(turnPlayer==myId) {
+                myCards.add(deck.remove(0));
+            }
+            else {
+                enemyCards.add(deck.remove(0));
             }
         }
     }
