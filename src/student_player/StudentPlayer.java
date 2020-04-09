@@ -5,6 +5,8 @@ import boardgame.Move;
 import Saboteur.SaboteurPlayer;
 import Saboteur.cardClasses.*;
 
+import Saboteur.cardClasses.SaboteurMap;
+import Saboteur.cardClasses.SaboteurTile;
 import java.util.ArrayList;
 
 import Saboteur.SaboteurBoardState;
@@ -48,18 +50,24 @@ public class StudentPlayer extends SaboteurPlayer {
 
         switch(currentPhase) {
             case OPENING:
+                // try {
+                result = MyTools.moveTowardsGoal(boardState);
+                // } catch (Exception e) {
+                //     System.out.println("Error occurred");
+                //     System.out.println(e.getMessage());
+                // }
+                if (result.getCardPlayed() instanceof SaboteurTile) {
+                    int[][] board = boardState.getHiddenIntBoard();
+                    MyTools.insertTile(board, (SaboteurTile) result.getCardPlayed(), result.getPosPlayed());
+                    if (MyTools.continuousPathDistanceFromGoal(board) < 10) {
+                        currentPhase = Phase.MIDGAME;
+                        System.out.println("Moving to midgame phase");
+                    }
+                }
                 
                 break;
             case MIDGAME:
-                break;
-            case ENDGAME:
-                break;
-        }
-    
-        // Return your move to be processed by the server.
-		// return result;
-
-		//Getting opponent's last move
+                //Getting opponent's last move
 		if (previousBoard != null) {
 			SaboteurTile[][] board = boardState.getHiddenBoard();
 			for(int i = 0; i < SaboteurBoardState.BOARD_SIZE; i++) {
@@ -129,6 +137,12 @@ public class StudentPlayer extends SaboteurPlayer {
     	}
 		discard.add(myMove.getCardPlayed());
 		previousBoard = boardState.getHiddenBoard();
-        return myMove;
+                result = myMove;
+            case ENDGAME:
+                break;
+        }
+    
+        // Return your move to be processed by the server.
+		return result;		
     }
 }

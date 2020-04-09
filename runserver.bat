@@ -1,0 +1,1 @@
+java -cp bin boardgame.Server -k -ng
