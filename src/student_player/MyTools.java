@@ -46,6 +46,24 @@ public class MyTools {
 
         ArrayList<SaboteurTile> pathTiles = new ArrayList<>();
 
+        int nuggetPos = -1;
+        int countRevealed = 0;
+        for (int i = 0; i < 3; i++) {
+            if (!board[SaboteurBoardState.hiddenPos[i][0]][SaboteurBoardState.hiddenPos[i][1]].getIdx().equals("8")) {
+                countRevealed++;
+            }
+            if (board[SaboteurBoardState.hiddenPos[i][0]][SaboteurBoardState.hiddenPos[i][1]].getIdx().equals("nugget")) {
+                nuggetPos = i;
+            }
+        }
+        if (nuggetPos == -1 && countRevealed == 2) {
+            for (int i = 0; i < 3; i++) {
+                if (board[SaboteurBoardState.hiddenPos[i][0]][SaboteurBoardState.hiddenPos[i][1]].getIdx().equals("8")) {
+                    nuggetPos = i;
+                }
+            } 
+        }
+
         if (boardState.getNbMalus(boardState.getTurnPlayer()) > 0) {
             System.out.println("Dealing with malus");
             for (int i = 0; i < cards.size(); i++) {
@@ -121,7 +139,7 @@ public class MyTools {
                 // System.out.println("Trying (" + positions.get(i)[0] + ", " + positions.get(i)[1] + ")");
                 insertTile(intBoard, pathTiles.get(i), positions.get(j));
                 // printIntBoard(intBoard);
-                int dist = continuousPathDistanceFromGoal(intBoard);
+                int dist = continuousPathDistanceFromGoal(intBoard, nuggetPos);
                 System.out.println("dist = " + dist);
                 if (dist < minDist) {
                     minDist = dist;
@@ -182,13 +200,18 @@ public class MyTools {
         }
     }
 
-    public static int continuousPathDistanceFromGoal(int[][] board) {
+    public static int continuousPathDistanceFromGoal(int[][] board, int nuggetPos) {
         // System.out.println("Computing distance from goal");
         // printIntBoard(board);
         // int startPos = SaboteurBoardState.originPos * 3;
         
         int[] startPos = {SaboteurBoardState.originPos * 3 + 1, SaboteurBoardState.originPos * 3 + 1};
-        int[] endPos = {SaboteurBoardState.hiddenPos[1][0] * 3 + 1, SaboteurBoardState.hiddenPos[1][1] * 3 + 1};
+        int[] endPos;
+        if (nuggetPos == -1) {
+            endPos = new int[]{SaboteurBoardState.hiddenPos[1][0] * 3 + 1, SaboteurBoardState.hiddenPos[1][1] * 3 + 1};   
+        } else {
+            endPos = new int[]{SaboteurBoardState.hiddenPos[nuggetPos][0] * 3 + 1, SaboteurBoardState.hiddenPos[nuggetPos][1] * 3 + 1};   
+        }
 
         boolean[][] reachableArr = new boolean[SaboteurBoardState.BOARD_SIZE * 3][SaboteurBoardState.BOARD_SIZE * 3];
         for (int i = 0; i < reachableArr.length; i++) {
