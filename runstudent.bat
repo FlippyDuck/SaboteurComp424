@@ -1,0 +1,1 @@
+java -cp bin boardgame.Client student_player.StudentPlayer
