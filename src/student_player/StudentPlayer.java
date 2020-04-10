@@ -18,6 +18,7 @@ public class StudentPlayer extends SaboteurPlayer {
     private enum Phase {OPENING, MIDGAME, ENDGAME}
 
 	private Phase currentPhase;
+	public static long start;
     /**
      * You must modify this constructor to return your student number. This is
      * important, because this is what the code that runs the competition uses to
@@ -42,7 +43,8 @@ public class StudentPlayer extends SaboteurPlayer {
         // MyTools.getSomething();
 
         // Is random the best you can do?
-        // Move myMove = boardState.getRandomMove();
+		// Move myMove = boardState.getRandomMove();
+		start = System.currentTimeMillis();
 
         SaboteurMove result = null;
 

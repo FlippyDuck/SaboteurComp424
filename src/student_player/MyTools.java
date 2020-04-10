@@ -2,6 +2,7 @@ package student_player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import Saboteur.SaboteurBoardState;
 import Saboteur.SaboteurMove;
@@ -308,8 +309,37 @@ public class MyTools {
 		}
 		//Monte carlo
     	SaboteurMove myMove = boardState.getRandomMove();
-    	double max = 0;
-    	for(SaboteurMove move : boardState.getAllLegalMoves()) {
+
+        ArrayList<SaboteurMove> moves = boardState.getAllLegalMoves();
+        HashMap<SaboteurMove, Integer> map = new HashMap<>();
+        BoardCopy board;
+		int numRuns = 1000;
+        for(int i = 0; i < numRuns; i++) {
+            //Allow 2 seconds
+            if(System.currentTimeMillis() - StudentPlayer.start >= 2000){
+                discard.add(myMove.getCardPlayed());
+                previousBoard = boardState.getHiddenBoard();
+                System.out.println(myMove.toPrettyString() + " -> Winrate: " + (map.get(myMove) * 100.0 / i) + "%, NumRuns: " + i + " =======================================================================");
+                return myMove;
+            }
+            for(SaboteurMove move : moves) {
+                map.putIfAbsent(move, 0);
+                //Prioritize map
+                if(move.getCardPlayed() instanceof SaboteurMap) {
+                    myMove = move;
+                    break;
+                }
+                board = new BoardCopy(boardState.getHiddenBoard(), boardState.getHiddenIntBoard(), boardState.getCurrentPlayerCards(), deck, player_id);
+    			//Process your move, then start the random run
+                board.processMove(move);
+                int utility = board.run();
+                map.put(move, map.get(move) + utility);
+            }
+            //Get best move
+            myMove = map.entrySet().stream().max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1).get().getKey();
+        }
+        /*double max = 0;
+        for(SaboteurMove move : boardState.getAllLegalMoves()) {
     		//Prioritize map
     		if(move.getCardPlayed() instanceof SaboteurMap) {
     			myMove = move;
@@ -333,6 +363,7 @@ public class MyTools {
     	}
 		discard.add(myMove.getCardPlayed());
         previousBoard = boardState.getHiddenBoard();
+        */
         return myMove;
     }
     
